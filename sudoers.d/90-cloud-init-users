@@ -1,0 +1,4 @@
+# Created by cloud-init v. 21.1-19-gbad84ad4-0ubuntu1~20.04.2 on Mon, 24 May 2021 11:45:27 +0000
+
+# User rules for nesterenko
+nesterenko ALL=(ALL) NOPASSWD:ALL
