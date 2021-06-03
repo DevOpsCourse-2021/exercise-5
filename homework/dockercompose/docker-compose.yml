@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  prod:
+    image: tomcat:9
+    ports:
+      - "8080:8080"
+    volumes:
+      - javavolume:/usr/local/tomcat/webapps/ 
+  dev:
+    build: mvncustom
+    volumes:
+      - javavolume:/boxfuse-sample-java-war-hello/target/
+volumes:
+  javavolume:
