@@ -1,0 +1,36 @@
+---
+- name: install prod
+  hosts: prod
+  become: yes
+
+  tasks:
+  - name: Ensure tomcat package is present
+    apt: 
+     name: tomcat9
+     state: present
+  - name: Check tomcat is started
+    service:
+     name: tomcat9
+     state: started
+- name: install dev
+  hosts: dev
+  become: yes
+
+  tasks:
+  - name: Ensure maven package is present
+    apt: 
+     name: maven
+     state: present
+  - name: git clone
+    git:
+     repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
+     dest: /tmp/boxfuse-sample-java-war-hello/
+     clone: yes
+  - name: maven build
+    shell: mvn -f /tmp/boxfuse-sample-java-war-hello/ package
+  - name: Transfer file from dev to prod
+    synchronize:
+      mode: pull
+      src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+      dest: /var/lib/tomcat9/webapps
+    delegate_to: 10.0.0.5
