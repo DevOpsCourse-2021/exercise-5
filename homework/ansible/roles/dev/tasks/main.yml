@@ -1,0 +1,13 @@
+---
+# tasks file for dev
+- name: Ensure maven package is present
+  apt:
+   name: maven
+   state: present
+- name: git clone
+  git:
+   repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
+   dest: /tmp/boxfuse-sample-java-war-hello/
+   clone: yes
+- name: maven build
+  shell: mvn -f /tmp/boxfuse-sample-java-war-hello/ package

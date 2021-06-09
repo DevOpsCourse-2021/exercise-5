@@ -1,0 +1,4 @@
+---
+# handlers file for enterprise
+- name: restart tomcat
+  service: name=tomcat9 state=restarted

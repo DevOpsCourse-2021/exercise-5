@@ -1,0 +1,22 @@
+---
+- name: install enterprise
+  hosts: prod
+  become: yes
+  
+  roles:
+   - enterprise
+   
+- name: install dev
+  hosts: dev
+  become: yes
+
+  roles:
+   - dev
+  
+  tasks:
+  - name: Transfer file from dev to prod
+    synchronize:
+      mode: pull
+      src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+      dest: /var/lib/tomcat9/webapps
+    delegate_to: 10.0.0.5

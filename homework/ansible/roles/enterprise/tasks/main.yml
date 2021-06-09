@@ -1,0 +1,9 @@
+---
+# tasks file for enterprise
+- name: Ensure tomcat package is present
+  apt:
+   name: tomcat9
+   state: present
+  notify:
+    - restart tomcat
+
