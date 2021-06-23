@@ -1,0 +1,32 @@
+pipeline {
+    agent {
+        docker {
+            image '52.249.182.136:8123/homework11:v1'
+        }
+    }
+    
+    stages {
+        stage ('git clone') {
+            steps {
+                git 'https://github.com/DevOpsCourse-2021/boxfuse-origin.git'
+            }
+        }
+        stage ('build app') {
+            steps {
+                sh 'mvn package'
+                sh 'mv ./target/hello-1.0.war /tmp/'
+                sh 'cd /tmp/'
+            }
+        }
+        stage ('build image') {
+            steps {
+                sh 'cd /tmp/'
+                sh 'echo "FROM tomcat:9">/var/lib/jenkins/workspace/homework11/Dockerfile'
+                sh 'echo "COPY ./target/hello-1.0.war /usr/local/tomcat/webapps/">>/var/lib/jenkins/workspace/homework11/Dockerfile'
+                sh 'docker build --tag=homework11-ent .'
+                sh 'docker tag homework11-ent 52.249.182.136:8123/homework11-ent'
+                sh 'docker push 52.249.182.136:8123/homework11-ent'
+            }
+        }
+    }
+}
