@@ -2,6 +2,7 @@ pipeline {
     agent {
         docker {
             image '52.249.182.136:8123/homework11:v1'
+			args '-v /var/run/docker.sock:/var/run/docker.sock -u root:root'
         }
     }
     
@@ -13,18 +14,14 @@ pipeline {
         }
         stage ('build app') {
             steps {
-                sh 'mvn package'
-                sh 'mv ./target/hello-1.0.war /tmp/'
-                sh 'cd /tmp/'
+               sh 'cd /var/lib/jenkins/workspace/homework11 && mvn package'
             }
         }
         stage ('build image') {
             steps {
-                sh 'cd /tmp/'
-                sh 'echo "FROM tomcat:9">/var/lib/jenkins/workspace/homework11/Dockerfile'
-                sh 'echo "COPY ./target/hello-1.0.war /usr/local/tomcat/webapps/">>/var/lib/jenkins/workspace/homework11/Dockerfile'
                 sh 'docker build --tag=homework11-ent .'
                 sh 'docker tag homework11-ent 52.249.182.136:8123/homework11-ent'
+                sh 'cat code | docker login -u admin --password-stdin 52.249.182.136:8123'
                 sh 'docker push 52.249.182.136:8123/homework11-ent'
             }
         }
