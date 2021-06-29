@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  app42paas:
+    build: app42paas
+    ports:
+    - 8080:8080
+  db:
+    image: mysql
+    ports:
+    - 3306:3306
+    environment:
+        MYSQL_ROOT_PASSWORD: NewSecretPass
+        MYSQL_USER: javaapp
+        MYSQL_PASSWORD: NewSecretJavaPass
+        MYSQL_DATABASE: javaappdb
+    volumes:
+      - dbdata:/var/lib/mysql
+volumes:
+  dbdata:
