@@ -11,7 +11,7 @@ services:
     environment:
         MYSQL_ROOT_PASSWORD: NewSecretPass
         MYSQL_USER: javaapp
-        MYSQL_PASSWORD: NewSecretJavaPass
+        MYSQL_PASSWORD: NewSecretPass
         MYSQL_DATABASE: javaappdb
     volumes:
       - dbdata:/var/lib/mysql
