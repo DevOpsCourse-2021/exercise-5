@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "2.66.0"
     }
   }
@@ -11,17 +11,16 @@ provider "azurerm" {
   features {}
 }
 
-# terraform import azurerm_resource_group.rg /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup
+# terraform import azurerm_resource_group.mygroup /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup
 
 # Create a resource group if it doesn't exist
- resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.resource_group_location
-  
   tags = {
     environment = "production"
   }
- }
+}
 
 # Create virtual network
 resource "azurerm_virtual_network" "vnet" {
@@ -72,7 +71,7 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-  
+
   security_rule {
     name                       = "HTTPS"
     priority                   = 1002
@@ -153,6 +152,7 @@ resource "tls_private_key" "example_ssh" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
+# output "tls_private_key" { value = tls_private_key.example_ssh.private_key_pem }
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "linuxvm" {
@@ -180,8 +180,9 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   disable_password_authentication = true
 
   admin_ssh_key {
-    username   = "azureuser"
-    public_key = tls_private_key.example_ssh.public_key_openssh
+    username = "azureuser"
+    #public_key = tls_private_key.example_ssh.public_key_openssh
+    public_key = file("/root/.ssh/id_rsa.pub")
   }
 
   boot_diagnostics {
@@ -191,4 +192,24 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   tags = {
     environment = "production"
   }
+
+  provisioner "file" {
+        source = "hello.html"
+        destination = "/tmp/index.html"
+    }
+}
+
+resource "azurerm_virtual_machine_extension" "ngnix" {
+  name                 = var.linux_virtual_machine_name
+  virtual_machine_id   = azurerm_linux_virtual_machine.linuxvm.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  settings = <<SETTINGS
+  {
+    "commandToExecute": "apt update && apt install nginx -y && rm -rf /var/www/html/* && mv /tmp/index.html  /var/www/html/"
+  }
+SETTINGS
+
 }

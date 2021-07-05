@@ -4,6 +4,7 @@ terraform fmt
 # initialize terraform Azure modules
 terraform init
 
+# import resource
 # validate the template
 terraform validate
 
@@ -18,7 +19,6 @@ terraform apply tfplan
 
 # cleanup files
 rm terraform.tfstate
-rm terraform.tfstate.backup
 rm tfplan
 rm tfplan.json
 rm -r .terraform/
