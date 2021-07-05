@@ -1,7 +1,0 @@
-
-[Unit]
-Description=Slice for walinuxagent extensions
-DefaultDependencies=no
-Before=slices.target
-Requires=system.slice
-After=system.slice
