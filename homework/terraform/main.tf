@@ -8,19 +8,20 @@ terraform {
 }
 
 provider "azurerm" {
-  version = "=2.66.0"
   features {}
 }
 
+# terraform import azurerm_resource_group.mygroup /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup
+
 # Create a resource group if it doesn't exist
-resource "azurerm_resource_group" "rg" {
+ resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.resource_group_location
-
+   create_option        = "Empty"
   tags = {
     environment = "production"
   }
-}
+ }
 
 # Create virtual network
 resource "azurerm_virtual_network" "vnet" {
