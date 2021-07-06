@@ -193,16 +193,27 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
     environment = "production"
   }
   
-  provisioner "file" {
-        source = "hello.html"
-        destination = "/tmp/index.html"
-        connection {
-          type = "ssh"
-          user = "azureuser"
-          host = "${azurerm_public_ip.public_ip.fqdn}"
-          private_key = file("/root/.ssh/id_rsa")
-        }
+}
+
+resource "null_resource" "ngnixcopyfile" {
+
+  triggers = {
+    public_ip = azurerm_public_ip.public_ip.ip_address
+  }
+
+  connection {
+    type  = "ssh"
+    host  = azurerm_public_ip.public_ip.ip_address
+    user  = "azureuser"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    # password = "${var.root_password}"
     }
+
+  provisioner "file" {
+    source  = "hello.html"  # local public key
+    destination  = "/tmp/index.html"  # will copy to remote VM as /tmp/test.pub
+  }
+
 }
 
 resource "azurerm_virtual_machine_extension" "ngnix" {
