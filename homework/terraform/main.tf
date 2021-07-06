@@ -193,16 +193,15 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
     environment = "production"
   }
   
-  connection {
-        type = "ssh"
-        user = "azureuser"
-        host = "${azurerm_public_ip.public_ip.fqdn}"
-        private_key = file("/root/.ssh/id_rsa")
-    }
-
   provisioner "file" {
         source = "hello.html"
         destination = "/tmp/index.html"
+        connection {
+          type = "ssh"
+          user = "azureuser"
+          host = "${azurerm_public_ip.public_ip.fqdn}"
+          private_key = file("/root/.ssh/id_rsa")
+        }
     }
 }
 
